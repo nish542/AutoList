@@ -60,6 +60,12 @@ class ListingGenerator:
         # Extract all possible features for backend attributes
         backend_attributes = self._extract_all_attributes(features, attributes)
         
+        # Extract new fields: dimensions/size, weight, primary use, included items
+        dimensions_size = self._extract_dimensions_size(attributes, features)
+        weight = self._extract_weight(attributes, features)
+        primary_use = self._extract_primary_use(attributes, features, category_schema)
+        included_items = self._extract_included_items(attributes, features)
+        
         # Ensure compliance
         title = self._ensure_compliance(title, max_length=200)
         bullets = [self._ensure_compliance(b, max_length=256) for b in bullets]
@@ -73,7 +79,12 @@ class ListingGenerator:
             "search_terms": search_terms[:50],
             "attributes": backend_attributes,
             "feature_count": len(bullets),
-            "extracted_features_summary": self._summarize_features(features)
+            "extracted_features_summary": self._summarize_features(features),
+            # New fields
+            "dimensions_size": dimensions_size,
+            "weight": weight,
+            "primary_use": primary_use,
+            "included_items": included_items
         }
     
     def _generate_unique_bullets(self, attributes: Dict, features: Dict, schema: Dict) -> List[str]:
@@ -731,3 +742,209 @@ detail makes.
             text = text[:max_length-3] + "..."
         
         return text
+    
+    def _extract_dimensions_size(self, attributes: Dict, features: Dict) -> str:
+        """
+        Extract dimensions/size information if available
+        Returns intelligent defaults if not found
+        """
+        # Check for explicit dimensions
+        if "dimensions" in attributes and attributes["dimensions"]:
+            return str(attributes["dimensions"])
+        
+        # Check for size attributes
+        if "size" in attributes and attributes["size"]:
+            return str(attributes["size"])
+        
+        # Check pattern features for dimensions
+        text_features = features.get("text_features", features)
+        if "pattern_features" in text_features:
+            pattern_feat = text_features["pattern_features"]
+            
+            if "dimensions" in pattern_feat and pattern_feat["dimensions"]:
+                return pattern_feat["dimensions"][0]
+            
+            if "size" in pattern_feat and pattern_feat["size"]:
+                return pattern_feat["size"][0]
+        
+        # Check for display/screen size (for electronics)
+        if "display_inches" in attributes and attributes["display_inches"]:
+            return f"{attributes['display_inches']}\" display"
+        
+        if "screen_size" in attributes and attributes["screen_size"]:
+            return str(attributes["screen_size"])
+        
+        # Check for capacity/volume
+        if "capacity_ml" in attributes and attributes["capacity_ml"]:
+            return f"{attributes['capacity_ml']}ml capacity"
+        
+        # Check if it's a clothing item
+        category_name = ""
+        if "category" in attributes:
+            category_name = attributes["category"].lower()
+        
+        # Get from schema if available
+        for cat in self.schemas["categories"]:
+            if cat["category_id"] in attributes.values():
+                category_name = cat["category_name"].lower()
+                break
+        
+        # If clothing, mention size options
+        if any(word in category_name for word in ["shirt", "t-shirt", "tshirt", "pants", "dress", "clothing"]):
+            return "Available in multiple sizes (XS-XXL)"
+        
+        # Default for non-clothing products
+        return "One Size"
+    
+    def _extract_weight(self, attributes: Dict, features: Dict) -> str:
+        """
+        Extract weight information if available
+        Returns intelligent default if not found
+        """
+        # Check for explicit weight
+        if "weight" in attributes and attributes["weight"]:
+            return str(attributes["weight"])
+        
+        # Check for weight_grams
+        if "weight_grams" in attributes and attributes["weight_grams"]:
+            grams = attributes["weight_grams"]
+            if isinstance(grams, (int, float)) and grams > 0:
+                if grams >= 1000:
+                    kg = grams / 1000
+                    return f"{kg:.2f}kg" if kg % 1 != 0 else f"{int(kg)}kg"
+                else:
+                    return f"{int(grams)}g"
+        
+        # Check for weight_kg
+        if "weight_kg" in attributes and attributes["weight_kg"]:
+            return f"{attributes['weight_kg']}kg"
+        
+        # Check for weight_lbs
+        if "weight_lbs" in attributes and attributes["weight_lbs"]:
+            return f"{attributes['weight_lbs']}lbs"
+        
+        # Check pattern features
+        text_features = features.get("text_features", features)
+        if "pattern_features" in text_features:
+            pattern_feat = text_features["pattern_features"]
+            
+            if "weight" in pattern_feat and pattern_feat["weight"]:
+                return pattern_feat["weight"][0]
+        
+        # Default: lightweight/variable
+        return "Lightweight - Varies by configuration"
+    
+    def _extract_primary_use(self, attributes: Dict, features: Dict, schema: Dict) -> str:
+        """
+        Extract primary use/purpose if available
+        Returns intelligent default based on category
+        """
+        # Check for inferred use cases
+        if "inferred_use_cases" in attributes and attributes["inferred_use_cases"]:
+            use_cases = attributes["inferred_use_cases"]
+            if isinstance(use_cases, list) and use_cases:
+                return use_cases[0]
+        
+        # Check for semantic target audience
+        if "semantic_target_audience" in attributes and attributes["semantic_target_audience"]:
+            audiences = attributes["semantic_target_audience"]
+            if isinstance(audiences, list) and audiences:
+                audience_str = ", ".join(audiences)
+                return f"Ideal for {audience_str}"
+        
+        # Check for inferred use environment
+        if "inferred_use_environment" in attributes and attributes["inferred_use_environment"]:
+            env = attributes["inferred_use_environment"]
+            return f"Optimized for {env}"
+        
+        # Check for use cases in pattern features
+        text_features = features.get("text_features", features)
+        if "pattern_features" in text_features:
+            pattern_feat = text_features["pattern_features"]
+            if "use_cases" in pattern_feat and pattern_feat["use_cases"]:
+                return pattern_feat["use_cases"][0]
+        
+        # Generate smart default based on category
+        category_name = schema["category_name"]
+        category_keywords = schema.get("keywords", [])
+        
+        # Build intelligent default based on category
+        use_cases = {
+            "water_bottle": "Daily hydration and outdoor activities",
+            "wireless_earbuds": "Music listening, calls, and workouts",
+            "smartwatch": "Fitness tracking and daily notifications",
+            "laptop_bag": "Laptop protection and daily commute",
+            "yoga_mat": "Fitness training and meditation",
+            "coffee_mug": "Hot beverage storage and daily use",
+            "t-shirt": "Casual wear and everyday comfort",
+            "phone_case": "Device protection and style",
+            "sunglasses": "UV protection and outdoor wear",
+            "laptop": "Work, productivity, and computing"
+        }
+        
+        category_id = schema.get("category_id", "").lower()
+        if category_id in use_cases:
+            return use_cases[category_id]
+        
+        # Generic default
+        return f"Perfect for {category_name.lower()} enthusiasts"
+    
+    def _extract_included_items(self, attributes: Dict, features: Dict) -> str:
+        """
+        Extract information about what comes in the box/included items
+        Returns intelligent defaults based on category/product type
+        """
+        included_items = []
+        
+        # Check for explicit included_items
+        if "included_items" in attributes and attributes["included_items"]:
+            return str(attributes["included_items"])
+        
+        # Check pattern features for compound features
+        text_features = features.get("text_features", features)
+        if "pattern_features" in text_features:
+            pattern_feat = text_features["pattern_features"]
+            
+            if "included_items" in pattern_feat and pattern_feat["included_items"]:
+                return pattern_feat["included_items"][0]
+        
+        # Check semantic features for compound features
+        if "semantic_features" in text_features:
+            sem_feat = text_features["semantic_features"]
+            if "compound_features" in sem_feat:
+                features_list = sem_feat["compound_features"]
+                if "comes_with" in features_list:
+                    return features_list["comes_with"]
+        
+        # Try to infer common accessories based on category
+        category_keywords = []
+        category_id = ""
+        for cat in self.schemas["categories"]:
+            for key, value in attributes.items():
+                if cat["category_id"] in str(value):
+                    category_keywords = cat.get("keywords", [])
+                    category_id = cat["category_id"]
+                    break
+        
+        # Text context check
+        text_lower = text_features.get("cleaned_text", "").lower()
+        
+        # Category-specific defaults
+        default_items = {
+            "water_bottle": "Water bottle, User manual",
+            "wireless_earbuds": "Earbuds, Charging case, USB cable, Ear tips (multiple sizes), User manual",
+            "smartwatch": "Smartwatch unit, Charging cable, Replacement bands, User manual",
+            "laptop_bag": "Laptop bag, Shoulder strap, User manual",
+            "yoga_mat": "Yoga mat, Carrying strap, User manual",
+            "coffee_mug": "Coffee mug, User manual",
+            "t-shirt": "T-Shirt",
+            "phone_case": "Phone case, Screen protector (optional), User manual",
+            "sunglasses": "Sunglasses, Protective case, Cleaning cloth, User manual",
+            "laptop": "Laptop, Power adapter, User manual, Quick start guide"
+        }
+        
+        if category_id in default_items:
+            return default_items[category_id]
+        
+        # Generic default
+        return "Product unit, User manual, Quick start guide"

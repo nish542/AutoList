@@ -39,6 +39,10 @@ const ListingEditor = () => {
           price: generatedListing.attributes?.price || "29.99",
           category: generatedListing.category || "Home & Kitchen",
           color: generatedListing.attributes?.color || "#ffffff",
+          dimensions_size: generatedListing.dimensions_size || "",
+          weight: generatedListing.weight || "",
+          primary_use: generatedListing.primary_use || "",
+          included_items: generatedListing.included_items || "",
         }
       : {
           title: post?.caption?.split("\n")[0]?.substring(0, 100) || "Product Title",
@@ -54,6 +58,10 @@ const ListingEditor = () => {
           price: "29.99",
           category: "Home & Kitchen",
           color: "#ffffff",
+          dimensions_size: "",
+          weight: "",
+          primary_use: "",
+          included_items: "",
         }
   );
 
@@ -236,6 +244,58 @@ const ListingEditor = () => {
                         />
                       </div>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dimensions_size">Dimensions / Size</Label>
+                    <Input
+                      id="dimensions_size"
+                      placeholder="e.g., 13.3 inches, 500ml capacity"
+                      value={listing.dimensions_size}
+                      onChange={(e) =>
+                        setListing({ ...listing, dimensions_size: e.target.value })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground">Auto-filled based on product type. Edit if needed.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="weight">Weight</Label>
+                    <Input
+                      id="weight"
+                      placeholder="e.g., 1.2kg, 250g"
+                      value={listing.weight}
+                      onChange={(e) =>
+                        setListing({ ...listing, weight: e.target.value })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground">Auto-filled with intelligent default. Edit if needed.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="primary_use">Primary Use / Purpose</Label>
+                    <Input
+                      id="primary_use"
+                      placeholder="e.g., Home office work, Outdoor sports"
+                      value={listing.primary_use}
+                      onChange={(e) =>
+                        setListing({ ...listing, primary_use: e.target.value })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground">Auto-filled based on category. Edit if needed.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="included_items">What's Included / Accessories</Label>
+                    <Input
+                      id="included_items"
+                      placeholder="e.g., USB cable, Carrying case, Manual"
+                      value={listing.included_items}
+                      onChange={(e) =>
+                        setListing({ ...listing, included_items: e.target.value })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground">Auto-filled with typical items. Edit if needed.</p>
                   </div>
 
                   <div className="space-y-2">

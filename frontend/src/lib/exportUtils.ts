@@ -10,6 +10,10 @@ export interface ListingData {
   price: string;
   category: string;
   color?: string;
+  dimensions_size?: string;
+  weight?: string;
+  primary_use?: string;
+  included_items?: string;
   [key: string]: any;
 }
 
@@ -36,6 +40,18 @@ export function exportAsCSV(listing: ListingData, filename = "listing.csv") {
   rows.push(`Keywords,"${escapeCSV(listing.keywords)}"`);
   if (listing.color) {
     rows.push(`Color,"${escapeCSV(listing.color)}"`);
+  }
+  if (listing.dimensions_size) {
+    rows.push(`Dimensions/Size,"${escapeCSV(listing.dimensions_size)}"`);
+  }
+  if (listing.weight) {
+    rows.push(`Weight,"${escapeCSV(listing.weight)}"`);
+  }
+  if (listing.primary_use) {
+    rows.push(`Primary Use/Purpose,"${escapeCSV(listing.primary_use)}"`);
+  }
+  if (listing.included_items) {
+    rows.push(`Included Items,"${escapeCSV(listing.included_items)}"`);
   }
 
   rows.push(""); // Blank line
@@ -204,6 +220,38 @@ export function exportAsHTML(listing: ListingData, filename = "listing.html") {
           ? `<div class="meta-item">
         <span class="meta-label">Dominant Color</span>
         <span class="meta-value">${escapeHTML(listing.color)}</span>
+      </div>`
+          : ""
+      }
+      ${
+        listing.dimensions_size
+          ? `<div class="meta-item">
+        <span class="meta-label">Dimensions/Size</span>
+        <span class="meta-value">${escapeHTML(listing.dimensions_size)}</span>
+      </div>`
+          : ""
+      }
+      ${
+        listing.weight
+          ? `<div class="meta-item">
+        <span class="meta-label">Weight</span>
+        <span class="meta-value">${escapeHTML(listing.weight)}</span>
+      </div>`
+          : ""
+      }
+      ${
+        listing.primary_use
+          ? `<div class="meta-item">
+        <span class="meta-label">Primary Use/Purpose</span>
+        <span class="meta-value">${escapeHTML(listing.primary_use)}</span>
+      </div>`
+          : ""
+      }
+      ${
+        listing.included_items
+          ? `<div class="meta-item">
+        <span class="meta-label">Included Items</span>
+        <span class="meta-value">${escapeHTML(listing.included_items)}</span>
       </div>`
           : ""
       }
@@ -462,6 +510,38 @@ function createPDFTemplate(listing: ListingData): HTMLElement {
             ? `<div class="pdf-meta-item">
           <span class="pdf-meta-label">Dominant Color</span>
           <span class="pdf-meta-value">${escapeHTML(listing.color)}</span>
+        </div>`
+            : ""
+        }
+        ${
+          listing.dimensions_size
+            ? `<div class="pdf-meta-item">
+          <span class="pdf-meta-label">Dimensions/Size</span>
+          <span class="pdf-meta-value">${escapeHTML(listing.dimensions_size)}</span>
+        </div>`
+            : ""
+        }
+        ${
+          listing.weight
+            ? `<div class="pdf-meta-item">
+          <span class="pdf-meta-label">Weight</span>
+          <span class="pdf-meta-value">${escapeHTML(listing.weight)}</span>
+        </div>`
+            : ""
+        }
+        ${
+          listing.primary_use
+            ? `<div class="pdf-meta-item">
+          <span class="pdf-meta-label">Primary Use/Purpose</span>
+          <span class="pdf-meta-value">${escapeHTML(listing.primary_use)}</span>
+        </div>`
+            : ""
+        }
+        ${
+          listing.included_items
+            ? `<div class="pdf-meta-item">
+          <span class="pdf-meta-label">Included Items</span>
+          <span class="pdf-meta-value">${escapeHTML(listing.included_items)}</span>
         </div>`
             : ""
         }
