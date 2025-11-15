@@ -1,0 +1,205 @@
+{
+  "categories": [
+    {
+      "category_id": "water_bottle",
+      "category_name": "Water Bottle",
+      "keywords": ["bottle", "flask", "hydration", "water", "drink", "insulated", "thermos", "tumbler"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "capacity_ml": {"type": "numeric", "min": 100, "max": 5000},
+        "material": {"type": "text", "options": ["stainless steel", "plastic", "glass", "aluminum", "copper"]},
+        "color": {"type": "text", "max_length": 30},
+        "dimensions_cm": {"type": "text", "format": "LxWxH"},
+        "weight_grams": {"type": "numeric", "min": 50, "max": 2000}
+      },
+      "optional_fields": {
+        "bpa_free": {"type": "boolean"},
+        "insulation_type": {"type": "text", "options": ["vacuum", "double-wall", "none"]},
+        "lid_type": {"type": "text", "options": ["screw", "flip", "straw", "push-button"]},
+        "dishwasher_safe": {"type": "boolean"},
+        "temperature_retention_hours": {"type": "numeric", "min": 0, "max": 48}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] [Capacity]ml [Material] Water Bottle - [Color] [Special Feature]",
+        "bullet_priorities": ["capacity", "material", "insulation", "bpa_free", "lid_type"]
+      }
+    },
+    {
+      "category_id": "wireless_earbuds",
+      "category_name": "Wireless Earbuds",
+      "keywords": ["earbuds", "headphones", "bluetooth", "wireless", "audio", "music", "earphones", "pods", "buds"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "battery_life_hours": {"type": "numeric", "min": 2, "max": 100},
+        "connectivity": {"type": "text", "options": ["Bluetooth 5.0", "Bluetooth 5.1", "Bluetooth 5.2", "Bluetooth 5.3"]},
+        "color": {"type": "text", "max_length": 30},
+        "charging_case": {"type": "boolean"},
+        "driver_size_mm": {"type": "numeric", "min": 6, "max": 15}
+      },
+      "optional_fields": {
+        "noise_cancellation": {"type": "text", "options": ["active", "passive", "none"]},
+        "water_resistance": {"type": "text", "pattern": "IPX[0-9]"},
+        "microphone": {"type": "boolean"},
+        "touch_controls": {"type": "boolean"},
+        "fast_charging": {"type": "boolean"},
+        "wireless_charging": {"type": "boolean"}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Wireless Earbuds - [Battery]H Battery, [Connectivity], [Special Features]",
+        "bullet_priorities": ["battery_life", "connectivity", "noise_cancellation", "water_resistance", "charging_features"]
+      }
+    },
+    {
+      "category_id": "smartwatch",
+      "category_name": "Smartwatch",
+      "keywords": ["smartwatch", "watch", "fitness", "tracker", "wearable", "smart band", "activity"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "display_size_inches": {"type": "numeric", "min": 0.9, "max": 2.5},
+        "battery_life_days": {"type": "numeric", "min": 1, "max": 30},
+        "compatibility": {"type": "text", "options": ["iOS", "Android", "iOS/Android"]},
+        "case_material": {"type": "text", "options": ["aluminum", "stainless steel", "plastic", "titanium"]},
+        "band_material": {"type": "text", "options": ["silicone", "leather", "metal", "nylon", "rubber"]}
+      },
+      "optional_fields": {
+        "heart_rate_monitor": {"type": "boolean"},
+        "gps": {"type": "boolean"},
+        "water_resistance": {"type": "text", "pattern": "(IP[0-9X]{2}|[0-9]+ATM)"},
+        "sleep_tracking": {"type": "boolean"},
+        "blood_oxygen": {"type": "boolean"},
+        "nfc_payments": {"type": "boolean"},
+        "voice_assistant": {"type": "text", "options": ["Alexa", "Google Assistant", "Siri", "Bixby"]}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Smartwatch - [Display Size]\" Display, [Battery Life] Day Battery, [Key Features]",
+        "bullet_priorities": ["display", "battery", "health_features", "water_resistance", "compatibility"]
+      }
+    },
+    {
+      "category_id": "laptop_bag",
+      "category_name": "Laptop Bag",
+      "keywords": ["laptop", "bag", "backpack", "case", "sleeve", "briefcase", "messenger", "computer bag"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "laptop_size_inches": {"type": "numeric", "min": 11, "max": 18},
+        "material": {"type": "text", "options": ["nylon", "polyester", "leather", "canvas", "neoprene"]},
+        "color": {"type": "text", "max_length": 30},
+        "compartments": {"type": "numeric", "min": 1, "max": 20},
+        "dimensions_cm": {"type": "text", "format": "LxWxH"}
+      },
+      "optional_fields": {
+        "water_resistant": {"type": "boolean"},
+        "padded_straps": {"type": "boolean"},
+        "usb_charging_port": {"type": "boolean"},
+        "anti_theft": {"type": "boolean"},
+        "trolley_strap": {"type": "boolean"},
+        "weight_kg": {"type": "numeric", "min": 0.2, "max": 3}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Laptop [Type] for [Size]\" Laptops - [Material], [Special Features]",
+        "bullet_priorities": ["laptop_compatibility", "compartments", "material", "protection_features", "comfort"]
+      }
+    },
+    {
+      "category_id": "yoga_mat",
+      "category_name": "Yoga Mat",
+      "keywords": ["yoga", "mat", "exercise", "fitness", "pilates", "workout", "gym mat", "meditation"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "thickness_mm": {"type": "numeric", "min": 3, "max": 15},
+        "length_cm": {"type": "numeric", "min": 150, "max": 200},
+        "width_cm": {"type": "numeric", "min": 50, "max": 80},
+        "material": {"type": "text", "options": ["PVC", "TPE", "natural rubber", "cork", "jute", "NBR"]},
+        "color": {"type": "text", "max_length": 30}
+      },
+      "optional_fields": {
+        "non_slip": {"type": "boolean"},
+        "eco_friendly": {"type": "boolean"},
+        "carrying_strap": {"type": "boolean"},
+        "alignment_marks": {"type": "boolean"},
+        "weight_grams": {"type": "numeric", "min": 500, "max": 3000},
+        "texture": {"type": "text", "options": ["smooth", "textured", "ridged"]}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Yoga Mat - [Thickness]mm Thick, [Length]x[Width]cm, [Material], [Key Feature]",
+        "bullet_priorities": ["dimensions", "thickness", "material", "non_slip", "portability"]
+      }
+    },
+    {
+      "category_id": "coffee_mug",
+      "category_name": "Coffee Mug",
+      "keywords": ["mug", "coffee", "cup", "tea", "ceramic", "travel mug", "tumbler", "drinkware"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "capacity_oz": {"type": "numeric", "min": 6, "max": 30},
+        "material": {"type": "text", "options": ["ceramic", "porcelain", "stainless steel", "glass", "plastic"]},
+        "color": {"type": "text", "max_length": 30},
+        "handle": {"type": "boolean"},
+        "height_cm": {"type": "numeric", "min": 5, "max": 20}
+      },
+      "optional_fields": {
+        "microwave_safe": {"type": "boolean"},
+        "dishwasher_safe": {"type": "boolean"},
+        "lid_included": {"type": "boolean"},
+        "insulated": {"type": "boolean"},
+        "design_pattern": {"type": "text", "max_length": 50},
+        "gift_box": {"type": "boolean"}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Coffee Mug - [Capacity]oz, [Material], [Color/Design], [Special Features]",
+        "bullet_priorities": ["capacity", "material", "microwave_safe", "dishwasher_safe", "design"]
+      }
+    },
+    {
+      "category_id": "tshirt",
+      "category_name": "T-Shirt",
+      "keywords": ["shirt", "tshirt", "t-shirt", "tee", "apparel", "clothing", "top", "cotton"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "size": {"type": "text", "options": ["XS", "S", "M", "L", "XL", "XXL", "XXXL"]},
+        "material": {"type": "text", "options": ["cotton", "polyester", "cotton blend", "bamboo", "modal"]},
+        "color": {"type": "text", "max_length": 30},
+        "gender": {"type": "text", "options": ["men", "women", "unisex", "boys", "girls"]},
+        "sleeve_type": {"type": "text", "options": ["short sleeve", "long sleeve", "3/4 sleeve", "sleeveless"]}
+      },
+      "optional_fields": {
+        "neckline": {"type": "text", "options": ["crew neck", "v-neck", "scoop neck", "henley"]},
+        "fit": {"type": "text", "options": ["regular", "slim", "relaxed", "athletic"]},
+        "pattern": {"type": "text", "max_length": 50},
+        "care_instructions": {"type": "text", "max_length": 100},
+        "fabric_weight_gsm": {"type": "numeric", "min": 100, "max": 300}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] [Gender] [Material] T-Shirt - [Sleeve Type], [Fit] Fit, [Color]",
+        "bullet_priorities": ["material", "size", "fit", "care", "design_features"]
+      }
+    },
+    {
+      "category_id": "phone_case",
+      "category_name": "Phone Case",
+      "keywords": ["case", "phone", "cover", "protective", "mobile", "smartphone", "iphone", "samsung"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "compatible_phone": {"type": "text", "max_length": 100},
+        "material": {"type": "text", "options": ["silicone", "TPU", "polycarbonate", "leather", "hybrid"]},
+        "color": {"type": "text", "max_length": 30},
+        "case_type": {"type": "text", "options": ["slim", "rugged", "wallet", "clear", "battery"]},
+        "protection_level": {"type": "text", "options": ["basic", "medium", "military-grade"]}
+      },
+      "optional_fields": {
+        "wireless_charging": {"type": "boolean"},
+        "kickstand": {"type": "boolean"},
+        "card_slots": {"type": "numeric", "min": 0, "max": 5},
+        "screen_protector": {"type": "boolean"},
+        "magsafe_compatible": {"type": "boolean"},
+        "drop_protection_feet": {"type": "numeric", "min": 0, "max": 20}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Case for [Phone Model] - [Case Type], [Material], [Special Features]",
+        "bullet_priorities": ["compatibility", "protection", "material", "features", "wireless_charging"]
+      }
+    }
+  ]
+}
+
+
