@@ -101,6 +101,36 @@
       }
     },
     {
+      "category_id": "laptop",
+      "category_name": "Laptop",
+      "keywords": ["laptop", "macbook", "notebook", "computer", "processor", "cpu", "ram", "ssd", "display", "screen", "keyboard"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "model": {"type": "text", "max_length": 100},
+        "processor": {"type": "text", "max_length": 100},
+        "ram_gb": {"type": "numeric", "min": 4, "max": 128},
+        "storage_gb": {"type": "numeric", "min": 128, "max": 8192},
+        "display_inches": {"type": "numeric", "min": 11, "max": 18},
+        "color": {"type": "text", "max_length": 30}
+      },
+      "optional_fields": {
+        "gpu": {"type": "text", "max_length": 100},
+        "battery_life_hours": {"type": "numeric", "min": 2, "max": 24},
+        "weight_kg": {"type": "numeric", "min": 0.9, "max": 3},
+        "operating_system": {"type": "text", "options": ["Windows", "macOS", "Linux", "Chrome OS"]},
+        "refresh_rate_hz": {"type": "numeric", "min": 60, "max": 360},
+        "resolution": {"type": "text", "max_length": 50},
+        "ports": {"type": "text", "max_length": 200},
+        "touchscreen": {"type": "boolean"},
+        "backlit_keyboard": {"type": "boolean"},
+        "dedicated_graphics": {"type": "boolean"}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] [Model] - [Processor], [RAM]GB RAM, [Storage]GB SSD, [Display]\" [Resolution]",
+        "bullet_priorities": ["processor", "ram", "storage", "display", "battery_life", "graphics"]
+      }
+    },
+    {
       "category_id": "yoga_mat",
       "category_name": "Yoga Mat",
       "keywords": ["yoga", "mat", "exercise", "fitness", "pilates", "workout", "gym mat", "meditation"],
@@ -197,6 +227,34 @@
       "listing_rules": {
         "title_format": "[Brand] Case for [Phone Model] - [Case Type], [Material], [Special Features]",
         "bullet_priorities": ["compatibility", "protection", "material", "features", "wireless_charging"]
+      }
+    },
+    {
+      "category_id": "sunglasses",
+      "category_name": "Sunglasses",
+      "keywords": ["sunglasses", "shades", "eyewear", "glasses", "eye", "uv", "lens", "frame", "polarized"],
+      "required_fields": {
+        "brand": {"type": "text", "max_length": 50},
+        "frame_color": {"type": "text", "max_length": 30},
+        "lens_color": {"type": "text", "max_length": 30},
+        "frame_material": {"type": "text", "options": ["plastic", "metal", "titanium", "acetate", "carbon fiber"]},
+        "lens_type": {"type": "text", "options": ["polarized", "gradient", "mirror", "photochromic", "standard"]},
+        "uv_protection": {"type": "text", "options": ["UV400", "100% UV", "99% UV"]}
+      },
+      "optional_fields": {
+        "frame_shape": {"type": "text", "options": ["square", "round", "rectangular", "oval", "cat-eye", "aviator", "clubmaster"]},
+        "lens_width_mm": {"type": "numeric", "min": 40, "max": 80},
+        "bridge_width_mm": {"type": "numeric", "min": 10, "max": 25},
+        "temple_length_mm": {"type": "numeric", "min": 100, "max": 160},
+        "polarized": {"type": "boolean"},
+        "anti_glare": {"type": "boolean"},
+        "scratch_resistant": {"type": "boolean"},
+        "case_included": {"type": "boolean"},
+        "cleaning_cloth": {"type": "boolean"}
+      },
+      "listing_rules": {
+        "title_format": "[Brand] Sunglasses - [Frame Shape], [Frame Color] Frame, [Lens Color] [Lens Type] Lens, [Protection Level]",
+        "bullet_priorities": ["uv_protection", "polarized", "frame_material", "lens_type", "frame_shape"]
       }
     }
   ]
