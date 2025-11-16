@@ -1,4 +1,4 @@
-import { ArrowRight, Instagram, Sparkles, Zap, CheckCircle2, TrendingUp, Clock } from "lucide-react";
+import { ArrowRight, Instagram, Sparkles, Zap, CheckCircle2, TrendingUp, Clock, Linkedin, Github, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -195,6 +195,175 @@ const Home = () => {
                 </CardContent>
               </Card>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet the Developers Section */}
+      <section className="py-16 px-6 relative overflow-hidden">
+        {/* Enhanced Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/30 via-accent/5 to-transparent pointer-events-none" />
+        <div className="absolute top-40 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-40 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-3 text-sm py-1 px-3">
+              <Sparkles className="w-3 h-3 mr-1.5" />
+              Our Team
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Meet the Developers
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              The passionate team building the future of automated listing generation
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+            {/* Developer 1 - Nishant Anand */}
+            <Card className="border-none shadow-xl hover:shadow-2xl transition-all duration-500 animate-scale-in group relative overflow-hidden">
+              {/* Card Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              
+              <CardContent className="pt-8 pb-8 text-center relative z-10">
+                <div className="relative mb-6">
+                  {/* Decorative Ring */}
+                  <div className="absolute inset-0 w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-accent/30 to-accent/10 blur-xl group-hover:scale-110 transition-transform duration-500" />
+                  
+                  {/* Image Container */}
+                  <div className="relative w-48 h-48 mx-auto rounded-full overflow-hidden ring-4 ring-accent/20 group-hover:ring-accent/40 transition-all duration-500 shadow-lg group-hover:shadow-2xl group-hover:scale-100">
+                    <img 
+                      src="/Nishant.jpg" 
+                      alt="Nishant Anand"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="hidden w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/20 to-accent/10">
+                      <User className="h-16 w-16 text-accent" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 mb-5">
+                  <h3 className="text-2xl font-bold">Nishant Anand</h3>
+                  <div className="inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium">
+                    Full-Stack Developer
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed px-2">
+                    Passionate about AI and automation. Specializes in building intelligent systems that solve real-world problems.
+                  </p>
+                </div>
+                
+                <div className="flex justify-center gap-2">
+                  <a
+                    href="https://www.linkedin.com/in/nishant-anand-75b544325/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-accent/10 hover:bg-accent hover:text-accent-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/_nish.ant_._/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-accent/10 hover:bg-accent hover:text-accent-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Instagram className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="https://github.com/nish542"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-accent/10 hover:bg-accent hover:text-accent-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Github className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="mailto:nishant.anand542@gmail.com"
+                    className="w-10 h-10 rounded-full bg-accent/10 hover:bg-accent hover:text-accent-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Developer 2 - Kumar Aditya */}
+            <Card className="border-none shadow-xl hover:shadow-2xl transition-all duration-500 animate-scale-in group relative overflow-hidden" style={{ animationDelay: "0.2s" }}>
+              {/* Card Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              
+              <CardContent className="pt-8 pb-8 text-center relative z-10">
+                <div className="relative mb-6">
+                  {/* Decorative Ring */}
+                  <div className="absolute inset-0 w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-primary/30 to-primary/10 blur-xl group-hover:scale-110 transition-transform duration-500" />
+                  
+                  {/* Image Container */}
+                  <div className="relative w-48 h-48 mx-auto rounded-full overflow-hidden ring-4 ring-primary/20 group-hover:ring-primary/50 transition-all duration-500 shadow-lg group-hover:shadow-2.5xl group-hover:scale-100">
+                    <img 
+                      src="/Kumar.jpg" 
+                      alt="Kumar Aditya"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="hidden w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/10">
+                      <User className="h-16 w-16 text-primary" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 mb-5">
+                  <h3 className="text-2xl font-bold">Kumar Aditya</h3>
+                  <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                    AI Engineer
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed px-2">
+                    AI enthusiast dedicated to creating innovative solutions. Focuses on machine learning and modern web technologies.
+                  </p>
+                </div>
+                
+                <div className="flex justify-center gap-2">
+                  <a
+                    href="https://www.linkedin.com/in/kumar-aditya-08b762251/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/k.aditya07/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Instagram className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="https://github.com/adityainhub"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Github className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="mailto:kumar.is22@bmsce.ac.in"
+                    className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-all hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-lg"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
