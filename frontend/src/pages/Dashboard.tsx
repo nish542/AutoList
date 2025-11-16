@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 import { Instagram, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -102,35 +103,40 @@ const Dashboard = () => {
             </p>
           </div>
 
-          {posts.length === 0 ? (
+          {loading && posts.length === 0 ? (
+            // Skeleton loaders for initial load
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Card key={i} className="overflow-hidden border-none shadow-lg">
+                  <Skeleton className="aspect-square w-full" />
+                  <CardContent className="pt-4 pb-4 space-y-3">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-10 w-full rounded-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : posts.length === 0 ? (
             <Card className="max-w-md mx-auto border-2 border-dashed animate-scale-in">
               <CardContent className="pt-12 pb-12 text-center space-y-6">
-                <div className="w-20 h-20 mx-auto bg-accent/10 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-accent/20 to-accent/10 rounded-full flex items-center justify-center">
                   <Instagram className="h-10 w-10 text-accent" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold">Fetch Your Posts</h3>
-                  <p className="text-muted-foreground">
-                    Click the button below to load your Instagram posts
+                  <h3 className="text-2xl font-bold">Connect Your Instagram</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Import your product posts to start creating optimized Amazon listings with AI
                   </p>
                 </div>
                 <Button
                   size="lg"
-                  className="rounded-full"
+                  className="rounded-full shadow-lg hover:shadow-xl transition-all"
                   onClick={fetchInstagramPosts}
                   disabled={loading}
                 >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    <>
-                      <Instagram className="mr-2 h-5 w-5" />
-                      Fetch My Posts
-                    </>
-                  )}
+                  <Instagram className="mr-2 h-5 w-5" />
+                  Fetch My Posts
                 </Button>
               </CardContent>
             </Card>
@@ -160,8 +166,8 @@ const Dashboard = () => {
                 {posts.map((post, index) => (
                   <Card
                     key={post.id}
-                    className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in group"
+                    style={{ animationDelay: `${index * 0.05}s` }}
                   >
                     <div className="aspect-square relative overflow-hidden bg-muted">
                       {post.media_type === "VIDEO" ? (
@@ -174,16 +180,16 @@ const Dashboard = () => {
                         <img
                           src={post.media_url}
                           alt={post.caption?.substring(0, 50) || "Instagram post"}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       )}
                     </div>
                     <CardContent className="pt-4 pb-4 space-y-3">
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {post.caption || "No caption"}
+                      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                        {post.caption || "No caption available"}
                       </p>
                       <Button
-                        className="w-full rounded-full"
+                        className="w-full rounded-full shadow hover:shadow-lg transition-all"
                         onClick={() => generateListing(post)}
                         disabled={generatingId === post.id}
                       >

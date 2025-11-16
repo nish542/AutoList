@@ -5,8 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import Navigation from "@/components/Navigation";
-import { ArrowLeft, Check, Download, FileJson, FileText, Sheet } from "lucide-react";
+import { ArrowLeft, Check, Download, FileJson, FileText, Sheet, FileCog, Sparkles, Home } from "lucide-react";
 import { toast } from "sonner";
 import {
   exportAsJSON,
@@ -21,6 +28,8 @@ const ListingEditor = () => {
   const navigate = useNavigate();
   const post = location.state?.post;
   const generatedListing = location.state?.listing;
+
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
 
   // Use generated listing if available, otherwise use default
   const [listing, setListing] = useState(
@@ -79,10 +88,13 @@ const ListingEditor = () => {
   }
 
   const handleConfirm = () => {
-    toast.success("Listing confirmed successfully!");
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 1500);
+    setShowDownloadDialog(true);
+    toast.success("Listing confirmed! Choose your download format.");
+  };
+
+  const handleGoHome = () => {
+    setShowDownloadDialog(false);
+    navigate("/");
   };
 
   const handleDownload = async (format: "json" | "csv" | "html" | "pdf") => {
@@ -119,26 +131,40 @@ const ListingEditor = () => {
     <div className="min-h-screen">
       <Navigation />
       
-      <div className="pt-32 pb-20 px-6">
+      <div className="pt-32 pb-20 px-6 bg-gradient-to-b from-secondary/20 to-transparent min-h-screen">
         <div className="container mx-auto max-w-7xl">
-          <Button
-            variant="ghost"
-            className="mb-8"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
+          <div className="mb-8 space-y-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dashboard")}
+              className="-ml-4 hover:bg-transparent"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-accent" />
+                <h1 className="text-4xl font-bold">Edit Your Listing</h1>
+              </div>
+              <p className="text-lg text-muted-foreground">
+                Review and refine your AI-generated Amazon listing before exporting
+              </p>
+            </div>
+          </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Preview Section */}
             <div className="space-y-6 animate-fade-in">
-              <Card className="border-none shadow-lg">
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader>
-                  <CardTitle>Original Post</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Original Post
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="aspect-square rounded-lg overflow-hidden mb-4 bg-muted">
+                  <div className="aspect-square rounded-lg overflow-hidden mb-4 bg-muted group">
                     {post.media_type === "VIDEO" ? (
                       <video
                         src={post.media_url}
@@ -149,11 +175,11 @@ const ListingEditor = () => {
                       <img
                         src={post.media_url}
                         alt="Instagram post"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {post.caption}
                   </p>
                 </CardContent>
@@ -162,13 +188,17 @@ const ListingEditor = () => {
 
             {/* Editor Section */}
             <div className="space-y-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              <Card className="border-none shadow-lg">
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader>
-                  <CardTitle>Generated Amazon Listing</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-accent" />
+                    Generated Amazon Listing
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">Edit any field to customize your listing</p>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="title">Product Title</Label>
+                    <Label htmlFor="title" className="text-base font-semibold">Product Title</Label>
                     <Input
                       id="title"
                       value={listing.title}
@@ -180,7 +210,7 @@ const ListingEditor = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="text-base font-semibold">Description</Label>
                     <Textarea
                       id="description"
                       value={listing.description}
@@ -188,11 +218,12 @@ const ListingEditor = () => {
                         setListing({ ...listing, description: e.target.value })
                       }
                       rows={6}
+                      className="resize-none"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Bullet Points</Label>
+                    <Label className="text-base font-semibold">Bullet Points</Label>
                     {listing.bulletPoints.map((point, index) => (
                       <Input
                         key={index}
@@ -309,52 +340,9 @@ const ListingEditor = () => {
                     />
                   </div>
 
-                  {/* Download Section */}
-                  <div className="space-y-3 pt-4 border-t">
-                    <p className="text-sm font-medium text-muted-foreground">Download Listing</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-lg"
-                        onClick={() => handleDownload("json")}
-                      >
-                        <FileJson className="mr-2 h-4 w-4" />
-                        JSON
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-lg"
-                        onClick={() => handleDownload("csv")}
-                      >
-                        <Sheet className="mr-2 h-4 w-4" />
-                        CSV
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-lg"
-                        onClick={() => handleDownload("html")}
-                      >
-                        <FileText className="mr-2 h-4 w-4" />
-                        HTML
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-lg"
-                        onClick={() => handleDownload("pdf")}
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        PDF
-                      </Button>
-                    </div>
-                  </div>
-
                   <div className="flex gap-3 pt-4">
                     <Button
-                      className="flex-1 rounded-full"
+                      className="flex-1 rounded-full shadow-lg hover:shadow-xl transition-all"
                       size="lg"
                       onClick={handleConfirm}
                     >
@@ -374,6 +362,89 @@ const ListingEditor = () => {
               </Card>
             </div>
           </div>
+
+          {/* Download Dialog */}
+          <AlertDialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
+            <AlertDialogContent className="max-w-2xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2 text-2xl">
+                  <Download className="h-6 w-6 text-accent" />
+                  Download Your Listing
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-base">
+                  Your Amazon listing is ready! Choose your preferred format to download.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              
+              <div className="space-y-6 py-4">
+                {/* Download Format Options */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    variant="outline"
+                    className="h-auto flex-col gap-3 py-6 hover:bg-accent hover:text-accent-foreground transition-all hover:scale-105"
+                    onClick={() => handleDownload("json")}
+                  >
+                    <FileJson className="h-10 w-10" />
+                    <div className="text-center">
+                      <div className="font-semibold text-lg">JSON</div>
+                      <div className="text-xs text-muted-foreground">Developer format</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-auto flex-col gap-3 py-6 hover:bg-accent hover:text-accent-foreground transition-all hover:scale-105"
+                    onClick={() => handleDownload("csv")}
+                  >
+                    <Sheet className="h-10 w-10" />
+                    <div className="text-center">
+                      <div className="font-semibold text-lg">CSV</div>
+                      <div className="text-xs text-muted-foreground">Spreadsheet</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-auto flex-col gap-3 py-6 hover:bg-accent hover:text-accent-foreground transition-all hover:scale-105"
+                    onClick={() => handleDownload("html")}
+                  >
+                    <FileText className="h-10 w-10" />
+                    <div className="text-center">
+                      <div className="font-semibold text-lg">HTML</div>
+                      <div className="text-xs text-muted-foreground">Web page</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-auto flex-col gap-3 py-6 hover:bg-accent hover:text-accent-foreground transition-all hover:scale-105"
+                    onClick={() => handleDownload("pdf")}
+                  >
+                    <FileCog className="h-10 w-10" />
+                    <div className="text-center">
+                      <div className="font-semibold text-lg">PDF</div>
+                      <div className="text-xs text-muted-foreground">Print ready</div>
+                    </div>
+                  </Button>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setShowDownloadDialog(false)}
+                  >
+                    Edit More
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={handleGoHome}
+                  >
+                    <Home className="mr-2 h-4 w-4" />
+                    Go to Home
+                  </Button>
+                </div>
+              </div>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
