@@ -1,0 +1,45 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Git
+.git
+.gitignore
+
+# Node / frontend
+frontend/
+node_modules/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Logs and runtime
+*.log
+*.out
+*.pid
+
+# Model/data directories (do not include large model files)
+models/
+data/
+*.ckpt
+*.pth
+*.pt
+
+# Docker / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Local config
+.env
+env.local
