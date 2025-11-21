@@ -37,7 +37,6 @@ export function exportAsCSV(listing: ListingData, filename = "listing.csv") {
   rows.push(`Title,"${escapeCSV(listing.title)}"`);
   rows.push(`Category,"${escapeCSV(listing.category)}"`);
   rows.push(`Price,"${escapeCSV(listing.price)}"`);
-  rows.push(`Keywords,"${escapeCSV(listing.keywords)}"`);
   if (listing.color) {
     rows.push(`Color,"${escapeCSV(listing.color)}"`);
   }
@@ -53,7 +52,8 @@ export function exportAsCSV(listing: ListingData, filename = "listing.csv") {
   if (listing.included_items) {
     rows.push(`Included Items,"${escapeCSV(listing.included_items)}"`);
   }
-
+  rows.push(`Keywords,"${escapeCSV(listing.keywords)}"`);
+  
   rows.push(""); // Blank line
   rows.push("Description");
   rows.push(`"${escapeCSV(listing.description)}"`);
@@ -61,7 +61,7 @@ export function exportAsCSV(listing: ListingData, filename = "listing.csv") {
   rows.push(""); // Blank line
   rows.push("Bullet Points");
   listing.bulletPoints.forEach((point, index) => {
-    rows.push(`"${index + 1}. ${escapeCSV(point)}"`);
+    rows.push(`${index + 1},"${escapeCSV(point)}"`);
   });
 
   const csvContent = rows.join("\n");
@@ -298,34 +298,54 @@ export function exportAsHTML(listing: ListingData, filename = "listing.html") {
  * Export listing as PDF using html2pdf library
  */
 export async function exportAsPDF(listing: ListingData, filename = "listing.pdf") {
+  let tempElement: HTMLElement | null = null;
   try {
     // Wait for html2pdf library to be loaded
     await loadHtml2Pdf();
     
-    const element = createPDFTemplate(listing);
+    tempElement = createPDFTemplate(listing);
+    
+    // Attach to DOM (visible but offscreen) for proper rendering
+    tempElement.style.position = 'fixed';
+    tempElement.style.left = '-9999px';
+    tempElement.style.top = '0';
+    tempElement.style.width = '210mm'; // A4 width
+    tempElement.style.backgroundColor = 'white';
+    document.body.appendChild(tempElement);
+    
+    // Wait for rendering and styles to apply
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const options = {
-      margin: 10,
+      margin: [10, 10, 10, 10],
       filename: filename,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { orientation: "portrait", unit: "mm", format: "a4" },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        logging: true,
+        letterRendering: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { 
+        orientation: "portrait", 
+        unit: "mm", 
+        format: "a4",
+        compress: true
+      },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
     // Access html2pdf from window object
     const html2pdf = (window as any).html2pdf;
     if (html2pdf) {
-      await new Promise((resolve, reject) => {
-        html2pdf()
-          .set(options)
-          .from(element)
-          .save()
-          .then(() => {
-            resolve(true);
-          })
-          .catch((err: any) => {
-            reject(err);
-          });
-      });
+      console.log('Starting PDF generation...');
+      await html2pdf()
+        .set(options)
+        .from(tempElement)
+        .save();
+      console.log('PDF generated successfully');
     } else {
       throw new Error("html2pdf library not available");
     }
@@ -336,6 +356,11 @@ export async function exportAsPDF(listing: ListingData, filename = "listing.pdf"
         ? error.message
         : "Failed to generate PDF. Please try again."
     );
+  } finally {
+    // Clean up: remove temporary element from DOM
+    if (tempElement && tempElement.parentNode) {
+      document.body.removeChild(tempElement);
+    }
   }
 }
 
@@ -374,212 +399,188 @@ function loadHtml2Pdf(): Promise<void> {
 }
 
 /**
- * Create a DOM element for PDF generation - matches HTML export styling
+ * Create a DOM element for PDF generation - uses proper DOM manipulation
  */
 function createPDFTemplate(listing: ListingData): HTMLElement {
-  const div = document.createElement("div");
-  div.innerHTML = `
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: white;
-      }
-      .pdf-container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 40px;
-        background-color: white;
-      }
-      .pdf-header {
-        border-bottom: 3px solid #2563eb;
-        padding-bottom: 20px;
-        margin-bottom: 30px;
-      }
-      .pdf-header h1 {
-        font-size: 28px;
-        margin: 0 0 10px 0;
-        color: #1f2937;
-      }
-      .pdf-meta-info {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-        margin-bottom: 30px;
-        padding: 20px;
-        background-color: #f9fafb;
-        border-radius: 6px;
-      }
-      .pdf-meta-item {
-        display: flex;
-        flex-direction: column;
-      }
-      .pdf-meta-label {
-        font-weight: 600;
-        color: #6b7280;
-        font-size: 12px;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-      }
-      .pdf-meta-value {
-        font-size: 16px;
-        color: #1f2937;
-      }
-      .pdf-section {
-        margin-bottom: 30px;
-      }
-      .pdf-section h2 {
-        font-size: 20px;
-        margin-bottom: 15px;
-        color: #1f2937;
-        border-left: 4px solid #2563eb;
-        padding-left: 12px;
-      }
-      .pdf-description {
-        background-color: #f9fafb;
-        padding: 15px;
-        border-radius: 6px;
-        line-height: 1.8;
-        color: #374151;
-      }
-      .pdf-bullet-points {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      .pdf-bullet-points li {
-        padding: 10px 0;
-        padding-left: 24px;
-        position: relative;
-        color: #374151;
-        line-height: 1.6;
-      }
-      .pdf-bullet-points li:before {
-        content: "✓";
-        position: absolute;
-        left: 0;
-        color: #2563eb;
-        font-weight: bold;
-        font-size: 16px;
-      }
-      .pdf-keywords {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .pdf-keyword-tag {
-        display: inline-block;
-        background-color: #dbeafe;
-        color: #1e40af;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 14px;
-      }
-      .pdf-footer {
-        margin-top: 40px;
-        padding-top: 20px;
-        border-top: 1px solid #e5e7eb;
-        text-align: center;
-        color: #9ca3af;
-        font-size: 12px;
-      }
-    </style>
-    
-    <div class="pdf-container">
-      <div class="pdf-header">
-        <h1>${escapeHTML(listing.title)}</h1>
-      </div>
-
-      <div class="pdf-meta-info">
-        <div class="pdf-meta-item">
-          <span class="pdf-meta-label">Category</span>
-          <span class="pdf-meta-value">${escapeHTML(listing.category)}</span>
-        </div>
-        <div class="pdf-meta-item">
-          <span class="pdf-meta-label">Price</span>
-          <span class="pdf-meta-value">$${escapeHTML(listing.price)}</span>
-        </div>
-        ${
-          listing.color
-            ? `<div class="pdf-meta-item">
-          <span class="pdf-meta-label">Dominant Color</span>
-          <span class="pdf-meta-value">${escapeHTML(listing.color)}</span>
-        </div>`
-            : ""
-        }
-        ${
-          listing.dimensions_size
-            ? `<div class="pdf-meta-item">
-          <span class="pdf-meta-label">Dimensions/Size</span>
-          <span class="pdf-meta-value">${escapeHTML(listing.dimensions_size)}</span>
-        </div>`
-            : ""
-        }
-        ${
-          listing.weight
-            ? `<div class="pdf-meta-item">
-          <span class="pdf-meta-label">Weight</span>
-          <span class="pdf-meta-value">${escapeHTML(listing.weight)}</span>
-        </div>`
-            : ""
-        }
-        ${
-          listing.primary_use
-            ? `<div class="pdf-meta-item">
-          <span class="pdf-meta-label">Primary Use/Purpose</span>
-          <span class="pdf-meta-value">${escapeHTML(listing.primary_use)}</span>
-        </div>`
-            : ""
-        }
-        ${
-          listing.included_items
-            ? `<div class="pdf-meta-item">
-          <span class="pdf-meta-label">Included Items</span>
-          <span class="pdf-meta-value">${escapeHTML(listing.included_items)}</span>
-        </div>`
-            : ""
-        }
-        <div class="pdf-meta-item">
-          <span class="pdf-meta-label">Generated On</span>
-          <span class="pdf-meta-value">${new Date().toLocaleDateString()}</span>
-        </div>
-      </div>
-
-      <div class="pdf-section">
-        <h2>Description</h2>
-        <div class="pdf-description">${escapeHTML(listing.description).replace(/\n/g, "<br>")}</div>
-      </div>
-
-      <div class="pdf-section">
-        <h2>Key Features</h2>
-        <ul class="pdf-bullet-points">
-          ${listing.bulletPoints.map((point) => `<li>${escapeHTML(point)}</li>`).join("")}
-        </ul>
-      </div>
-
-      <div class="pdf-section">
-        <h2>Search Keywords</h2>
-        <div class="pdf-keywords">
-          ${listing.keywords
-            .split(",")
-            .map((keyword) => `<span class="pdf-keyword-tag">${escapeHTML(keyword.trim())}</span>`)
-            .join("")}
-        </div>
-      </div>
-
-      <div class="pdf-footer">
-        <p>Amazon Listing Generated - ${new Date().toLocaleString()}</p>
-      </div>
-    </div>
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = `
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background-color: white;
+    padding: 40px;
+    color: #333;
+    max-width: 800px;
+    margin: 0 auto;
   `;
+  
+  // Title section
+  const title = document.createElement("h1");
+  title.textContent = listing.title;
+  title.style.cssText = `
+    font-size: 24px;
+    color: #1f2937;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #2563eb;
+  `;
+  wrapper.appendChild(title);
+  
+  // Spacing
+  wrapper.appendChild(createSpacer(20));
+  
+  // Meta info section
+  const metaSection = document.createElement("div");
+  metaSection.style.cssText = `
+    background-color: #f9fafb;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+  `;
+  
+  const metaItems = [
+    { label: "Category", value: listing.category },
+    { label: "Price", value: `$${listing.price}` },
+  ];
+  
+  if (listing.color) metaItems.push({ label: "Dominant Color", value: listing.color });
+  if (listing.dimensions_size) metaItems.push({ label: "Dimensions/Size", value: listing.dimensions_size });
+  if (listing.weight) metaItems.push({ label: "Weight", value: listing.weight });
+  if (listing.primary_use) metaItems.push({ label: "Primary Use/Purpose", value: listing.primary_use });
+  if (listing.included_items) metaItems.push({ label: "Included Items", value: listing.included_items });
+  
+  metaItems.push({ label: "Generated On", value: new Date().toLocaleDateString() });
+  
+  metaItems.forEach(item => {
+    const metaItem = document.createElement("div");
+    metaItem.style.cssText = "margin-bottom: 12px;";
+    
+    const label = document.createElement("div");
+    label.textContent = item.label;
+    label.style.cssText = `
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    `;
+    
+    const value = document.createElement("div");
+    value.textContent = item.value;
+    value.style.cssText = "font-size: 14px; color: #1f2937;";
+    
+    metaItem.appendChild(label);
+    metaItem.appendChild(value);
+    metaSection.appendChild(metaItem);
+  });
+  
+  wrapper.appendChild(metaSection);
+  
+  // Description section
+  const descSection = createSection("Description");
+  const descContent = document.createElement("div");
+  descContent.style.cssText = `
+    background-color: #f9fafb;
+    padding: 15px;
+    border-radius: 6px;
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 20px;
+  `;
+  descContent.textContent = listing.description;
+  descSection.appendChild(descContent);
+  wrapper.appendChild(descSection);
+  
+  // Bullet points section
+  const bulletSection = createSection("Key Features");
+  const bulletList = document.createElement("ul");
+  bulletList.style.cssText = "list-style: none; padding: 0; margin: 0 0 20px 0;";
+  
+  listing.bulletPoints.forEach(point => {
+    const li = document.createElement("li");
+    li.style.cssText = `
+      padding: 8px 0 8px 24px;
+      position: relative;
+      color: #374151;
+      line-height: 1.6;
+    `;
+    li.textContent = point;
+    
+    // Add checkmark pseudo-element alternative
+    const check = document.createElement("span");
+    check.textContent = "✓";
+    check.style.cssText = `
+      position: absolute;
+      left: 0;
+      color: #2563eb;
+      font-weight: bold;
+    `;
+    li.insertBefore(check, li.firstChild);
+    
+    bulletList.appendChild(li);
+  });
+  
+  bulletSection.appendChild(bulletList);
+  wrapper.appendChild(bulletSection);
+  
+  // Keywords section
+  const keywordsSection = createSection("Search Keywords");
+  const keywordsContainer = document.createElement("div");
+  keywordsContainer.style.cssText = "display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;";
+  
+  listing.keywords.split(",").forEach(keyword => {
+    const tag = document.createElement("span");
+    tag.textContent = keyword.trim();
+    tag.style.cssText = `
+      display: inline-block;
+      background-color: #dbeafe;
+      color: #1e40af;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+    `;
+    keywordsContainer.appendChild(tag);
+  });
+  
+  keywordsSection.appendChild(keywordsContainer);
+  wrapper.appendChild(keywordsSection);
+  
+  // Footer
+  const footer = document.createElement("div");
+  footer.style.cssText = `
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 11px;
+  `;
+  footer.textContent = `Amazon Listing Generated - ${new Date().toLocaleString()}`;
+  wrapper.appendChild(footer);
+  
+  return wrapper;
+}
 
-  return div;
+function createSection(title: string): HTMLElement {
+  const section = document.createElement("div");
+  section.style.cssText = "margin-bottom: 25px;";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = title;
+  heading.style.cssText = `
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #1f2937;
+    border-left: 4px solid #2563eb;
+    padding-left: 12px;
+  `;
+  
+  section.appendChild(heading);
+  return section;
+}
+
+function createSpacer(height: number): HTMLElement {
+  const spacer = document.createElement("div");
+  spacer.style.height = `${height}px`;
+  return spacer;
 }
 
 /**

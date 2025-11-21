@@ -22,10 +22,9 @@ app = FastAPI(title="Amazon Listing Generator")
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    # During local development allow the Vite dev server origins
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    # To allow Access-Control-Allow-Origin: * change allow_origins to ["*"]
-    # but don't enable credentials when using wildcard. For dev we don't need credentials.
+    # Allow localhost for development and all origins for production
+    # You can restrict this to specific frontend URLs if needed
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

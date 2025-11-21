@@ -629,12 +629,18 @@ class ListingGenerator:
         if "colors" in attributes and attributes["colors"]:
             colors = attributes["colors"]
             if isinstance(colors, list) and colors:
-                title_parts.append(colors[0].title())
+                # Ensure we get a string, not a nested list
+                color = colors[0] if colors else ""
+                if isinstance(color, str):
+                    title_parts.append(color.title())
         
         if "materials" in attributes and attributes["materials"]:
             materials = attributes["materials"]
             if isinstance(materials, list) and materials:
-                title_parts.append(materials[0].title())
+                # Ensure we get a string, not a nested list
+                material = materials[0] if materials else ""
+                if isinstance(material, str):
+                    title_parts.append(material.title())
         
         # Special features
         if attributes.get("is_professional"):

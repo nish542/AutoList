@@ -12,7 +12,11 @@ class Settings(BaseSettings):
     api_description: str = "Generate Amazon product listings from social media posts"
     
     # CORS settings
-    cors_origins: list = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: list = [
+        "http://localhost:5173", 
+        "http://localhost:3000",
+        "https://auto-list.vercel.app"
+    ]
     
     # Model settings
     use_gpu: bool = False

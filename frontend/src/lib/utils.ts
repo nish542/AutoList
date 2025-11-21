@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 // Base URL for backend API. Prefer Vite environment variable `VITE_API_URL` if provided;
 // For development: use localhost:8000, for production: use deployed Azure URL
 export const API_BASE = (import.meta.env.VITE_API_URL as string) ||
-  (import.meta.env.DEV ? "http://localhost:8000" : "https://autolist-afgzaegkhxbxgeg8.centralindia-01.azurewebsites.net");
+  (import.meta.env.DEV ? "http://localhost:8000" : "https://autolistbackend.happyrock-8cdefed1.centralindia.azurecontainerapps.io");
 
 /**
  * Helper to call backend endpoints. If `input` is a full URL it will be used as-is.
